@@ -1,0 +1,31 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "A Simple chat app using socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RishabMangal/ChatApp.git"
+  },
+  "keywords": [
+    "chat",
+    "server",
+    "room",
+    "join",
+    "socket.io"
+  ],
+  "author": "Rishab Mangal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RishabMangal/ChatApp/issues"
+  },
+  "homepage": "https://github.com/RishabMangal/ChatApp#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "path": "^0.12.7",
+    "socket.io": "^2.3.0"
+  }
+}
