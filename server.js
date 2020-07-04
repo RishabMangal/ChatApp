@@ -22,6 +22,7 @@ io.on("connection", (socket) => {
         users.push(userObj)
         // console.log("users after :", users);
         io.emit("all-users", users);
+        io.emit("message-update",allMessages);
     });
     socket.on("send-message", (obj) => {
         // console.log("message recieveed from client: ", obj);
