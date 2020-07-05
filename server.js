@@ -52,6 +52,8 @@ io.on("connection", (socket) => {
         break;
       }
     }
+    io.emit("all-users", users);
+    io.emit("message-update", allMessages);
   });
   // socket.on("find-user", (username) => {
   //     users.find((u, i, a) => {
