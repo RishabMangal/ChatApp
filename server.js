@@ -39,9 +39,9 @@ io.on("connection", (socket) => {
     io.emit("message-update", allMessages);
   });
   socket.on("send-message", (obj) => {
-    // console.log("message recieveed from client: ", obj);
-    // allMessages.push(obj);
     allMessages.unshift(obj);
+    if (allMessages.length > 100)
+      allMessages.splice(100, allMessages.length - 100);
     io.emit("message-update", allMessages);
   });
   socket.on("sign-out", (u) => {
