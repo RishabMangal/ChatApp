@@ -45,7 +45,13 @@ io.on("connection", (socket) => {
     io.emit("message-update", allMessages);
   });
   socket.on("sign-out", (u) => {
-    users.filter((usr) => usr !== u);
+    for (let i = 0; i < users.length; i++)
+    {
+      if (users[i].username === u) {
+        users.splice(i, 1);
+        break;
+      }
+    }
   });
   // socket.on("find-user", (username) => {
   //     users.find((u, i, a) => {
