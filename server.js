@@ -17,7 +17,7 @@ const port = process.env.PORT || 8080;
 // })
 
 var users = [];
-var allMessages = [];
+var allMessages = [{ from: "Chat Bot", message: "Welcome to Lets Chat" }];
 app.use(express.static(path.join(__dirname, "public")));
 
 const checkUser = (u) => {
