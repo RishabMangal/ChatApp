@@ -65,9 +65,19 @@ io.on("connection", (socket) => {
         break;
       }
     }
+    socket.broadcast.emit("user-disconnected", socket.username);
     io.emit("all-users", users);
     io.emit("message-update", allMessages);
   });
+
+  socket.on("disconnect", (e) => {
+    io.emit("all-users", users);
+    io.emit("message-update", allMessages);
+    console.log("socket disconnected ", e);
+    console.log("user disconnected ", socket.username);
+    // io.emit("user-disconnected", socket.username);
+  })
+
   // socket.on("find-user", (username) => {
   //     users.find((u, i, a) => {
   //         u.username===username
