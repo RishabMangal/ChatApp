@@ -4,6 +4,18 @@ const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const port = process.env.PORT || 8080;
+
+// const redis = require("redis");
+// const redisDB = redis.createClient("http://redis-18511.c14.us-east-1-2.ec2.cloud.redislabs.com:18511/");
+
+// redisDB.on("connect", () => {
+//   console.log("DB Connected sucessfully...");
+// })
+
+// redisDB.on("error", (err) => {
+//   console.log("Error while connecting DB", err);
+// })
+
 var users = [];
 var allMessages = [];
 app.use(express.static(path.join(__dirname, "public")));
@@ -23,7 +35,7 @@ const checkUser = (u) => {
 io.on("connection", (socket) => {
   // console.log("New Connection has been made");
   socket.on("join-chat", (m) => {
-    // console.log("Welcome user :", m.username);
+    // console.log("Welcome user :", m.username,socket.id);
     // console.log("users before :", users);
     socket.username = m.username;
     // users[socket.username] = socket;
@@ -34,12 +46,13 @@ io.on("connection", (socket) => {
     var flag = checkUser(userObj.username);
     // console.log("flag is: ", flag);
     if (!flag) users.unshift(userObj);
-    // socket.emit("is-user-exists", flag);
+    socket.emit("is-user-exists", flag);
     io.emit("all-users", users);
     io.emit("message-update", allMessages);
   });
   socket.on("send-message", (obj) => {
     allMessages.unshift(obj);
+    socket.broadcast.emit("message-recieved", obj);
     if (allMessages.length > 100)
       allMessages.splice(100, allMessages.length - 100);
     io.emit("message-update", allMessages);
@@ -61,5 +74,10 @@ io.on("connection", (socket) => {
   //     })
   // })
 });
+
+app.get("/", (req, res) => {
+  res.write("<p>Hello World</p>")
+})
+
 
 http.listen(port, () => console.log(`Server is running @ ${port}`));
