@@ -17,14 +17,15 @@ const port = process.env.PORT || 8080;
 // })
 
 var users = [];
-var allMessages = [{ from: "Chat Bot", message: "Welcome to Lets Chat" }];
+var allMessages = [{ from: "ChatBot", message: "Welcome to Lets Chat" }];
+var typingUsers = new Set();
 app.use(express.static(path.join(__dirname, "public")));
 
 const checkUser = (u) => {
   let temp = false;
   users.forEach((usr, i) => {
     if (usr.username === u) {
-      // console.log("usr is:  ", usr);
+      console.log("usr is:  ", usr);
       temp = true;
     }
   });
@@ -49,17 +50,27 @@ io.on("connection", (socket) => {
     socket.emit("is-user-exists", flag);
     io.emit("all-users", users);
     io.emit("message-update", allMessages);
+    socket.on("typing", (u) => {
+      // typingUsers.unshift(u);
+      typingUsers.add(u);
+      socket.broadcast.emit("who-is-typing", typingUsers);
+      console.log(typingUsers, "are typing");
+    });
+    socket.on("done-typing", (u) => {
+      typingUsers.delete(u);
+      socket.broadcast.emit("who-is-typing", typingUsers);
+      io.emit("typing-update", typingUsers);
+    });
   });
   socket.on("send-message", (obj) => {
-    allMessages.unshift(obj);
+    allMessages.push(obj);
     socket.broadcast.emit("message-recieved", obj);
     if (allMessages.length > 100)
       allMessages.splice(100, allMessages.length - 100);
     io.emit("message-update", allMessages);
   });
   socket.on("sign-out", (u) => {
-    for (let i = 0; i < users.length; i++)
-    {
+    for (let i = 0; i < users.length; i++) {
       if (users[i].username === u) {
         users.splice(i, 1);
         break;
@@ -76,7 +87,7 @@ io.on("connection", (socket) => {
     console.log("socket disconnected ", e);
     console.log("user disconnected ", socket.username);
     // io.emit("user-disconnected", socket.username);
-  })
+  });
 
   // socket.on("find-user", (username) => {
   //     users.find((u, i, a) => {
@@ -86,8 +97,7 @@ io.on("connection", (socket) => {
 });
 
 app.get("/", (req, res) => {
-  res.write("<p>Hello World</p>")
-})
-
+  res.write("<p>Hello World</p>");
+});
 
 http.listen(port, () => console.log(`Server is running @ ${port}`));
